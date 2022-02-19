@@ -28,6 +28,7 @@ More instruction comming soon but for now the basic steps are:
    ```console
    docker-compose -f docker-compose.yaml \
      -f docker-compose.teslamate.yaml \
+     -f docker-compose.powerwall.yaml \
      up -d
    ```
 1. Set TeslaMate Preferences at: [http://server-ip:4000](http://localhost:4000)
@@ -46,5 +47,6 @@ Sometimes you just need to start over:
 ```console
 docker-compose -f docker-compose.yaml \
   -f docker-compose.teslamate.yaml \
+  -f docker-compose.powerwall.yaml \
   down --rmi all -v --remove-orphans
 ```
