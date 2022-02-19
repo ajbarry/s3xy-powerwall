@@ -1,4 +1,5 @@
 # s3xy-solar-wallboard
+
 Tesla Vehicle and Solar Information Wallboards
 
 Brought to you by these awesome projects:
@@ -28,6 +29,7 @@ More instruction comming soon but for now the basic steps are:
    ```console
    docker-compose -f docker-compose.yaml \
      -f docker-compose.teslamate.yaml \
+     -f docker-compose.powerwall.yaml \
      up -d
    ```
 1. Set TeslaMate Preferences at: [http://server-ip:4000](http://localhost:4000)
@@ -36,6 +38,24 @@ More instruction comming soon but for now the basic steps are:
 ### Configuration
 
 Comming Soon...
+
+#### Obtaining a POWERWALL_TOKEN
+
+Use the following commands to request an authentication token that can be used
+in place of the `POWERWALL_TOKEN` environment variable:
+
+```console
+curl --location --request POST 'https://192.168.144.5/api/login/Basic' \
+  --insecure --silent --header 'Content-Type: application/json' \
+  --data-raw '{
+    "username": "customer",
+    "password": "your gateway password",
+    "email": "you@someplace.com"
+  }' \
+  | jq -r .token
+```
+
+Copy the token output from the console and use this as the value for `POWERWALL_TOKEN`
 
 ## Troubleshooting
 
@@ -46,5 +66,6 @@ Sometimes you just need to start over:
 ```console
 docker-compose -f docker-compose.yaml \
   -f docker-compose.teslamate.yaml \
+  -f docker-compose.powerwall.yaml \
   down --rmi all -v --remove-orphans
 ```

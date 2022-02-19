@@ -40,3 +40,8 @@ services:
     volumes:
       - mosquitto-conf:/mosquitto/config
       - mosquitto-data:/mosquitto/data
+
+volumes:
+  teslamate-db:
+  mosquitto-conf:
+  mosquitto-data:
