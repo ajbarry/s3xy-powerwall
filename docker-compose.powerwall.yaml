@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  telegraf:
+    image: docker.io/telegraf:1.19
+    container_name: telegraf
+    labels:
+      io.containers.autoupdate: image
+    command:
+      - "bash"
+      - "-xe"
+      - "/tmp/entrypoint.sh"
+    restart: unless-stopped
+    environment: 
+      - POWERWALL_PASS=${POWERWALL_PASS}
+      - POWERWALL_LOCATION=${POWERWALL_LOCATION}
+    volumes:
+      - ./telegraf/entrypoint.sh:/tmp/entrypoint.sh:z
+      - ./telegraf/etc:/etc/telegraf:z
+      - ./powerwall_auth:/tmp/cookie:z
+    extra_hosts:
+      - powerwall:${POWERWALL_IP}
+
+  influxdb:
+    image: docker.io/influxdb:1.8
+    container_name: influxdb
+    labels:
+      io.containers.autoupdate: image
+    restart: unless-stopped
+    volumes:
+        - ./influxdb/etc:/etc/influxdb
+        - /srv/powerwall/influxdb:/var/lib/influxdb:z
