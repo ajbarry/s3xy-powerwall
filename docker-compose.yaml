@@ -48,7 +48,7 @@ services:
       - DATABASE_NAME=${TM_DB_NAME}
       - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
-      - TZ=${TM_TZ}
+      - TZ=${GEO_TZ}
     ports:
       - 4000:4000
     volumes:
@@ -60,6 +60,20 @@ services:
       - mosquitto
 
   ## Powerwall Services
+  pypowerwall:
+    image: jasonacox/pypowerwall:latest
+    container_name: pypowerwall
+    hostname: pypowerwall
+    restart: always
+    ports:
+      - 8675:8675
+    environment:
+      PW_PASSWORD: ${PW_PASSWORD}
+      PW_EMAIL: ${PW_EMAIL}
+      PW_HOST: ${PW_HOST}
+      PW_TIMEZONE: ${GEO_TZ}
+      PW_DEBUG: "no"
+
   influxdb:
     image: docker.io/influxdb:1.8
     container_name: influxdb
@@ -71,9 +85,7 @@ services:
       - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
       - influxdb-data:/var/lib/influxdb
     ports:
-      - target: 8086
-        published: 8086
-        mode: host
+      - 8086:8086
 
   telegraf:
     image: docker.io/telegraf:1.19
@@ -83,10 +95,11 @@ services:
     labels:
       io.containers.autoupdate: image
     environment:
-      - POWERWALL_TOKEN=${POWERWALL_TOKEN}
-      - POWERWALL_LOCATION=${POWERWALL_LOCATION}
+      PW_TOKEN: ${PW_TOKEN}
+      GEO_LAT: ${GEO_LAT}
+      GEO_LON: ${GEO_LON}
     extra_hosts:
-      - powerwall:${POWERWALL_IP}
+      - powerwall:${PW_HOST}
     volumes:
       - ./telegraf:/etc/telegraf
     depends_on:
@@ -100,7 +113,6 @@ services:
     labels:
       io.containers.autoupdate: image
     environment:
-      # teslamate
       DATABASE_USER: ${TM_DB_USER}
       DATABASE_PASS: ${TM_DB_PASS}
       DATABASE_NAME: ${TM_DB_NAME}
@@ -108,10 +120,8 @@ services:
       GRAFANA_PASSWD: ${GRAFANA_PASS}
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS}
-      # dc-powerwall-dashboard
       GF_INSTALL_PLUGINS: "grafana-piechart-panel, natel-plotly-panel, blackmirror1-singlestat-math-panel, btplc-trend-box-panel, marcuscalidus-svg-panel, michaeldmoore-multistat-panel, yesoreyeram-boomtable-panel, ryantxu-ajax-panel, grafana-influxdb-flux-datasource, fetzerch-sunandmoon-datasource, andig-darksky-datasource, simpod-json-datasource"
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: "natel-discrete-panel, pr0ps-trackmap-panel, panodata-map-panel, natel-plotly-panel, btplc-trend-box-panel"
-      POWERWALL_LOCATION: ${POWERWALL_LOCATION}
     ports:
       - 3000:3000
     volumes:

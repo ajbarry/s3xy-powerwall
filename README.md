@@ -27,10 +27,7 @@ More instruction comming soon but for now the basic steps are:
 1. Copy `.env.example` to `.env` and fill in the blanks
 1. Run:
    ```console
-   docker-compose -f docker-compose.yaml \
-     -f docker-compose.teslamate.yaml \
-     -f docker-compose.powerwall.yaml \
-     up -d
+   docker-compose up -d
    ```
 1. Set TeslaMate Preferences at: [http://server-ip:4000](http://localhost:4000)
 1. View Grafana Dashboards at: [http://server-ip:3000](http://localhost:3000)
@@ -39,10 +36,10 @@ More instruction comming soon but for now the basic steps are:
 
 Comming Soon...
 
-#### Obtaining a POWERWALL_TOKEN
+#### Direct Gateway Connection
 
 Use the following commands to request an authentication token that can be used
-in place of the `POWERWALL_TOKEN` environment variable:
+in place of the `PW_TOKEN` environment variable:
 
 ```console
 curl --location --request POST 'https://192.168.144.5/api/login/Basic' \
@@ -55,7 +52,7 @@ curl --location --request POST 'https://192.168.144.5/api/login/Basic' \
   | jq -r .token
 ```
 
-Copy the token output from the console and use this as the value for `POWERWALL_TOKEN`
+Copy the token output from the console and use this as the value for `PW_TOKEN`
 
 ## Troubleshooting
 
