@@ -2,14 +2,14 @@ apiVersion: 1
 
 datasources:
   - orgId: 1
-    name: DS_POWERDATA
+    name: PowerWall
     type: influxdb
     typeLogoUrl: ""
     access: proxy
     url: http://influxdb:8086
     password: ""
     user: ""
-    database: PowerwallData
+    database: powerwall
     basicAuth: false
     basicAuthUser: ""
     basicAuthPassword: ""

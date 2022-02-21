@@ -1,34 +1,7 @@
 version: "3"
 
 services:
-  grafana:
-    image: teslamate/grafana:latest
-    container_name: grafana
-    restart: always
-    labels:
-      io.containers.autoupdate: image
-    environment:
-      # teslamate
-      - DATABASE_USER=${TM_DB_USER}
-      - DATABASE_PASS=${TM_DB_PASS}
-      - DATABASE_NAME=${TM_DB_NAME}
-      - DATABASE_HOST=database
-      - GRAFANA_PASSWD=${GRAFANA_PASS}
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}
-      # dc-powerwall-dashboard
-      - GF_INSTALL_PLUGINS=grafana-piechart-panel
-      - POWERWALL_LOCATION=${POWERWALL_LOCATION}
-      # - VIRTUAL_HOST=${VIRTUAL_HOST}
-      # - VIRTUAL_PORT=${VIRTUAL_PORT}
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/dashboards:/dashboards
-
+  ## Administration Services
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
@@ -42,6 +15,125 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data
 
+  ## TeslaMate Services
+  database:
+    image: postgres:13
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${TM_DB_USER}
+      - POSTGRES_PASSWORD=${TM_DB_PASS}
+      - POSTGRES_DB=${TM_DB_NAME}
+    volumes:
+      - teslamate-db:/var/lib/postgresql/data
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: always
+    command: mosquitto -c /mosquitto-no-auth.conf
+    # ports:
+    #   - 1883:1883
+    volumes:
+      - mosquitto-conf:/mosquitto/config
+      - mosquitto-data:/mosquitto/data
+
+  teslamate:
+    image: teslamate/teslamate:latest
+    container_name: teslamate
+    restart: always
+    environment:
+      - DATABASE_USER=${TM_DB_USER}
+      - DATABASE_PASS=${TM_DB_PASS}
+      - DATABASE_NAME=${TM_DB_NAME}
+      - DATABASE_HOST=database
+      - MQTT_HOST=mosquitto
+      - TZ=${TM_TZ}
+    ports:
+      - 4000:4000
+    volumes:
+      - ./data/teslamate/import:/opt/app/import
+    cap_drop:
+      - all
+    depends_on:
+      - database
+      - mosquitto
+
+  ## Powerwall Services
+  influxdb:
+    image: docker.io/influxdb:1.8
+    container_name: influxdb
+    hostname: influxdb
+    restart: always
+    labels:
+      io.containers.autoupdate: image
+    volumes:
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - influxdb-data:/var/lib/influxdb
+    ports:
+      - target: 8086
+        published: 8086
+        mode: host
+
+  # cookieproxy:
+  #   image: pridkett/cookieproxy:0.1.0
+  #   container_name: cookieproxy
+  #   hostname: cookieproxy
+  #   restart: always
+  #   command: ["/bin/sh", "-c", '/go/bin/cookieproxy -request "{\"url\": \"https://powerwall/api/login/Basic\", \"headers\": {\"Content-Type\": \"application/json\"}, \"body\": \"{\\\"username\\\":\\\"customer\\\",\\\"password\\\":\\\"$$POWERWALL_PASSWORD\\\", \\\"force_sm_off\\\":false}\", \"method\": \"POST\"}"']
+  #   extra_hosts:
+  #     - "powerwall:${POWERWALL_IP}"
+
+  telegraf:
+    image: docker.io/telegraf:1.19
+    container_name: telegraf
+    hostname: telegraf
+    restart: always
+    labels:
+      io.containers.autoupdate: image
+    environment:
+      - POWERWALL_TOKEN=${POWERWALL_TOKEN}
+      - POWERWALL_LOCATION=${POWERWALL_LOCATION}
+    extra_hosts:
+      - powerwall:${POWERWALL_IP}
+    volumes:
+      - ./telegraf:/etc/telegraf
+    depends_on:
+      - influxdb
+      - cookieproxy
+
+  ### Common Services ###
+  grafana:
+    image: teslamate/grafana:latest
+    container_name: grafana
+    restart: always
+    labels:
+      io.containers.autoupdate: image
+    environment:
+      # teslamate
+      DATABASE_USER: ${TM_DB_USER}
+      DATABASE_PASS: ${TM_DB_PASS}
+      DATABASE_NAME: ${TM_DB_NAME}
+      DATABASE_HOST: database
+      GRAFANA_PASSWD: ${GRAFANA_PASS}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS}
+      # dc-powerwall-dashboard
+      GF_INSTALL_PLUGINS: "grafana-piechart-panel, natel-plotly-panel, blackmirror1-singlestat-math-panel, btplc-trend-box-panel, marcuscalidus-svg-panel, michaeldmoore-multistat-panel, yesoreyeram-boomtable-panel, ryantxu-ajax-panel, grafana-influxdb-flux-datasource, fetzerch-sunandmoon-datasource, andig-darksky-datasource, simpod-json-datasource"
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: "natel-discrete-panel, pr0ps-trackmap-panel, panodata-map-panel, natel-plotly-panel, btplc-trend-box-panel"
+      POWERWALL_LOCATION: ${POWERWALL_LOCATION}
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/dashboards
+
 volumes:
-  grafana-data:
   portainer-data:
+  teslamate-db:
+  mosquitto-conf:
+  mosquitto-data:
+  influxdb-data:
+  grafana-data:
