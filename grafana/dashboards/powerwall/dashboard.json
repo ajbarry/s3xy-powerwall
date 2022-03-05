@@ -22,7 +22,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 36,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -51,7 +50,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "-- Mixed --",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -850,6 +852,7 @@
       "targets": [
         {
           "alias": "solar",
+          "datasource": "PowerWall",
           "groupBy": [],
           "hide": false,
           "measurement": "http",
@@ -870,7 +873,7 @@
                 "type": "sum"
               },
               {
-                "params": ["  * 0.179"],
+                "params": ["  * 0.21"],
                 "type": "math"
               }
             ]
@@ -880,6 +883,7 @@
         },
         {
           "alias": "combined",
+          "datasource": "PowerWall",
           "groupBy": [
             {
               "params": ["1h"],
@@ -894,7 +898,7 @@
           "measurement": "http",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT s + g FROM (SELECT sum(solar)  * 0.358 AS s, sum(to_grid) * 0.179 AS g FROM kwh.http WHERE  $timeFilter tz('America/Los_Angeles'))",
+          "query": "SELECT s + g FROM (SELECT sum(solar)  * 0.21 AS s, sum(to_grid) * 0.21 AS g FROM kwh.http WHERE  $timeFilter tz('America/Los_Angeles'))",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -918,6 +922,7 @@
         },
         {
           "alias": "battery",
+          "datasource": "PowerWall",
           "groupBy": [],
           "hide": false,
           "measurement": "http",
@@ -934,7 +939,7 @@
                 "type": "field"
               },
               {
-                "params": ["  * 0.358"],
+                "params": ["  * 0.51"],
                 "type": "math"
               }
             ]
@@ -1841,7 +1846,7 @@
       "id": 31,
       "options": {
         "legend": {
-          "calcs": ["mean"],
+          "calcs": ["max"],
           "displayMode": "list",
           "placement": "bottom"
         },
@@ -1961,7 +1966,7 @@
               "type": "fill"
             }
           ],
-          "hide": false,
+          "hide": true,
           "measurement": "http",
           "orderByTime": "ASC",
           "policy": "strings",
@@ -2055,7 +2060,7 @@
       "id": 32,
       "options": {
         "legend": {
-          "calcs": ["mean"],
+          "calcs": ["max"],
           "displayMode": "list",
           "placement": "bottom"
         },
@@ -2175,7 +2180,7 @@
               "type": "fill"
             }
           ],
-          "hide": false,
+          "hide": true,
           "measurement": "http",
           "orderByTime": "ASC",
           "policy": "strings",
@@ -2269,7 +2274,7 @@
       "id": 33,
       "options": {
         "legend": {
-          "calcs": ["mean"],
+          "calcs": ["max"],
           "displayMode": "list",
           "placement": "bottom"
         },
@@ -2389,7 +2394,7 @@
               "type": "fill"
             }
           ],
-          "hide": false,
+          "hide": true,
           "measurement": "http",
           "orderByTime": "ASC",
           "policy": "strings",
@@ -2443,6 +2448,6 @@
   "timezone": "browser",
   "title": "Powerwall Monitor",
   "uid": "s3xy-energy-monitor",
-  "version": 4,
+  "version": 12,
   "weekStart": ""
 }

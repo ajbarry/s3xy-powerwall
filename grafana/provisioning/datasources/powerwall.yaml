@@ -1,9 +1,9 @@
 apiVersion: 1
 
 datasources:
-  - orgId: 1
-    name: PowerWall
+  - name: PowerWall
     type: influxdb
+    orgId: 1
     typeLogoUrl: ""
     access: proxy
     url: http://influxdb:8086
