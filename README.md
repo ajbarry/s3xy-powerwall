@@ -2,12 +2,15 @@
 
 Tesla Vehicle and Solar Information Wallboards
 
-Brought to you by these awesome projects:
+Inspired and cribbed from these awesome projects:
 
-- [teslamate](https://github.com/adriankumpf/teslamate) - Vehicle information provided by TeslaMate
-- [teslaPowerDash](https://github.com/rhodesman/teslaPowerDash) - PowerWall information provided by Tesla Powerwall Dashboard
+- [teslamate](https://github.com/adriankumpf/teslamate)
+- [teslaPowerDash](https://github.com/rhodesman/teslaPowerDash)
+- [Powerwall-Dashboard](https://github.com/jasonacox/Powerwall-Dashboard)
+- [powerwall_monitor](https://github.com/mihailescu2m/powerwall_monitor)
+- [dc-powerwall-dashboard](https://github.com/liveaverage/dc-powerwall-dashboard)
 
-and consolidated into sexy Grafana playlists by s3xy-solar-wallboard.
+... and consolidated into a S3XY Energy Grafana playlist by s3xy-solar-wallboard.
 
 ## Getting Started
 
@@ -17,9 +20,9 @@ This project is currenly an early work in progess. Star this repo to keep up wit
 
 - Tesla Vehicle
 - Tesla Energy Gateway
-- Local always-on home server or Raspberry Pi running Docker Compose
+- Local always-on home server or Raspberry Pi with Docker Compose
 
-### Installation
+### Installation and Configuration
 
 More instruction comming soon but for now the basic steps are:
 
@@ -32,37 +35,16 @@ More instruction comming soon but for now the basic steps are:
 1. Set TeslaMate Preferences at: [http://server-ip:4000](http://localhost:4000)
 1. View Grafana Dashboards at: [http://server-ip:3000](http://localhost:3000)
 
-### Configuration
-
-Comming Soon...
-
-#### Direct Gateway Connection
-
-Use the following commands to request an authentication token that can be used
-in place of the `PW_TOKEN` environment variable:
-
-```console
-curl --location --request POST 'https://192.168.144.5/api/login/Basic' \
-  --insecure --silent --header 'Content-Type: application/json' \
-  --data-raw '{
-    "username": "customer",
-    "password": "your gateway password",
-    "email": "you@someplace.com"
-  }' \
-  | jq -r .token
-```
-
-Copy the token output from the console and use this as the value for `PW_TOKEN`
-
 ## Troubleshooting
+
+- [Docker Compose](https://docs.docker.com/compose/)
+- [How To Install Docker and Docker-Compose On Raspberry Pi](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
+- [Connecting to Tesla Gateway](https://www.tesla.com/support/energy/powerwall/own/monitoring-from-home-network)
 
 ### Starting Over From Scratch
 
 Sometimes you just need to start over:
 
 ```console
-docker-compose -f docker-compose.yaml \
-  -f docker-compose.teslamate.yaml \
-  -f docker-compose.powerwall.yaml \
-  down --rmi all -v --remove-orphans
+docker-compose down --rmi all -v --remove-orphans
 ```

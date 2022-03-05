@@ -95,9 +95,9 @@ services:
     labels:
       io.containers.autoupdate: image
     environment:
-      PW_TOKEN: ${PW_TOKEN}
-      GEO_LAT: ${GEO_LAT}
-      GEO_LON: ${GEO_LON}
+      OWM_API_KEY: ${OWM_API_KEY}
+      OWM_CITY_ID: ${OWM_CITY_ID}
+      OWM_UNITS: ${OWM_UNITS}
     extra_hosts:
       - powerwall:${PW_HOST}
     volumes:
