@@ -233,11 +233,11 @@
               },
               {
                 "id": "min",
-                "value": -100
+                "value": -60
               },
               {
                 "id": "max",
-                "value": 100
+                "value": 60
               },
               {
                 "id": "custom.hideFrom",
@@ -441,7 +441,9 @@
           "tz": "America/Los_Angeles"
         },
         {
-          "datasource": "Sun and Moon",
+          "datasource": {
+            "uid": "8LXeEoRgz"
+          },
           "refId": "F",
           "target": "sun_altitude"
         }
@@ -1922,7 +1924,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineStyle": {
               "fill": "solid"
             },
@@ -1931,8 +1933,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -2144,8 +2146,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -2349,7 +2351,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineStyle": {
               "fill": "solid"
             },
@@ -2358,8 +2360,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -2543,7 +2545,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "1m",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -2571,6 +2573,6 @@
   "timezone": "browser",
   "title": "Powerwall Monitor",
   "uid": "s3xy-energy-monitor",
-  "version": 15,
+  "version": 6,
   "weekStart": ""
 }
